@@ -10,6 +10,7 @@
 
 
 #include "client.h" 
+#include "game.h" 
 
 
 int main(int argc, char const *argv[])
@@ -103,6 +104,10 @@ void connect_to_server()
     if (strcmp(server_reponse, "instruction: make board") == 0)
     {
         // make_board(); TO CONTINUE ......
+        construct_game_board();
+        show_game_board();
+        put_ship("destroyer");
+        show_game_board();
     }
     
 
