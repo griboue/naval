@@ -64,21 +64,33 @@ void put_ship(char* ship_type, char* message)
     int position1_x;
     int position2_y;
     int position2_x;
+    int error;
 
     if (strcmp(ship_type, "destroyer") == 0)
     {
         printf("You have to put a DESTROYER on the board !");
     }
 
-    printf("\n \n Pease indicate the FIRST cell of the ship:(ex. 'B6') \n");
-    scanf("%s", position1_read);
-    position1_x = position1_read[0]-65;     // convert ASCII CHAR LETTER to int (from 0 to 9 max)
-    position1_y = position1_read[1]-48;     // convert ASCII CHAR NUMBER to int (from 0 to 9 max)
+    do {
+        printf("\n \n Pease indicate the FIRST cell of the ship:(ex. 'B6') \n");
+        scanf("%s", position1_read);
+        position1_x = position1_read[0]-65;   // convert ASCII CHAR LETTER to int (from 0 to 9 max)
+        position1_y = position1_read[1]-48;   // convert ASCII CHAR NUMBER to int (from 0 to 9 max)
 
-    printf("\n \n Pease indicate the LAST cell of the ship:(ex. 'B6') \n");
-    scanf("%s", position2_read);
-    position2_x = position2_read[0]-65;     // convert ASCII CHAR LETTER to int (from 0 to 9 max)
-    position2_y = position2_read[1]-48;     // convert ASCII CHAR NUMBER to int (from 0 to 9 max)
+        printf("\n \n Pease indicate the LAST cell of the ship:(ex. 'B6') \n");
+        scanf("%s", position2_read);
+        position2_x = position2_read[0]-65;   // convert ASCII CHAR LETTER to int (from 0 to 9 max)
+        position2_y = position2_read[1]-48;   // convert ASCII CHAR NUMBER to int (from 0 to 9 max)
+
+        //Check is size is legit
+        int size = length_of_ship(position1_y, position1_x, position2_y, position2_x);
+        if (size!=2) {
+            error = 1;
+            printf("\n This ship must have a size of 2 and the actual size is %d",size);
+        }
+        else
+            error =0;
+    } while(error);
 
     if (strcmp(ship_type, "destroyer") == 0)
     {
@@ -104,16 +116,16 @@ void put_ship(char* ship_type, char* message)
 int length_of_ship(int position1_y, int position1_x, int position2_y, int position2_x){
     if(position1_x!=position2_x && position1_y!=position2_y)     //diagonals
         return -1;
-    if (position1_x==position2_x) { //the boat is on a line
-        if (position1_y<position2_y)  //boat left to right
-            return position2_x-position1_x;
+    if (position1_y==position2_y) { //the boat is on a line
+        if (position1_x<position2_x)  //boat left to right
+            return position2_x-position1_x + 1;
         else  //boat right to left
-            return position1_x-position2_x;
+            return position1_x-position2_x + 1;
     }
     else { //the boat is on a column
-        if (position1_x<position2_x) //boat top to bot
-            return position2_y-position1_y;
+        if (position1_y<position2_y) //boat top to bot
+            return position2_y-position1_y + 1;
         else //boat bot to top
-            return position1_y-position2_y;
+            return position1_y-position2_y + 1;
     }
 }
