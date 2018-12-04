@@ -42,9 +42,11 @@ void* serverWorker(void* context)
         {
             printf("ERROR while sending response to client from worker \n");
         }
+        recv(sock, &client_response, sizeof(client_response), 0);
+        printf("\n WHAT CLIENT SENT: %s\n", client_response);
+        printf("\n WTFFF ! \n");
     // }
     
-
     return NULL;
 }
 
@@ -82,12 +84,16 @@ int main()
 
     printf("\n WE COULD LAUNCH THE GAME BECAUSE 2 PLAYERS ! \n");
 
+    pthread_t thread_id[2];
     for (int i = 0; i < 2; i++)
     {
-        pthread_t thread_id;
-        pthread_create(&thread_id, NULL, serverWorker, &client_sockets[i]);
+        pthread_create(&(thread_id[i]), NULL, serverWorker, &client_sockets[i]);
     }
-    
+
+    pthread_join(thread_id[0], NULL);
+    printf("\n WORKERS 1 TERMINATED \n");
+    pthread_join(thread_id[1], NULL);
+    printf("\n WORKERS 2 TERMINATED \n");
     
     // system pause to wait for other thread to terminate
     int read;

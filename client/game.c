@@ -18,6 +18,10 @@ void construct_game_board()
     }
 }
 
+/**
+ * @brief 
+ * Show the global main board on the console
+ */
 void show_game_board()
 {
     fflush(stdout); 
@@ -44,25 +48,50 @@ void show_game_board()
     fflush(stdout); 
 }
 
-void put_ship(char* ship_type)
+
+/**
+ * @brief 
+ * Put a ship on the global client board
+ * 
+ * @param ship_type 
+ * @param message: the serialized message to send to the server (to verify correctness of ship placement)
+ */
+void put_ship(char* ship_type, char* message)
 {
-    char position_read[20];
+    char position1_read[20];
+    char position2_read[20];
     int position1_y;
     int position1_x;
+    int position2_y;
+    int position2_x;
 
     if (strcmp(ship_type, "destroyer") == 0)
     {
-        printf("\n \n Pease indicate the first cell of the destroyer: \n");
+        printf("You have to put a DESTROYER on the board !");
     }
 
-    scanf("%s", position_read);
+    printf("\n \n Pease indicate the FIRST cell of the ship:(ex. 'B6') \n");
+    scanf("%s", position1_read);
+    position1_x = position1_read[0]-65; // convert ASCII CHAR LETTER to int (from 0 to 9 max)
+    position1_y = position1_read[1]-48; // convert ASCII CHAR NUMBER to int (from 0 to 9 max)
 
-    position1_y = atoi(&position_read[0]);
-    position1_x = atoi(&position_read[1]);
-
-    printf("you entered %d", position1_y);
-
-    game_board[position1_y][position1_x] = 'D';
-
+    printf("\n \n Pease indicate the LAST cell of the ship:(ex. 'B6') \n");
+    scanf("%s", position2_read);
+    position2_x = position2_read[0]-65; // convert ASCII CHAR LETTER to int (from 0 to 9 max)
+    position2_y = position2_read[1]-48; // convert ASCII CHAR NUMBER to int (from 0 to 9 max)
+    
+    if (strcmp(ship_type, "destroyer") == 0)
+    {
+        game_board[position1_y][position1_x] = 'D';
+        game_board[position2_y][position2_x] = 'D';
+    }
+    
+    // message to send to the server (serialized in a string message)
+    message[0] = position1_read[0];
+    message[1] = position1_read[1];
+    message[2] = '-';
+    message[3] = position2_read[0];
+    message[4] = position2_read[1];
+    message[5] = '\0';
 
 }
