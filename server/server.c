@@ -21,31 +21,16 @@ int client_sockets[2];
 
 void* serverWorker(void* context)
 {
-    char client_response[256];
-    
+    char client_response[256]; 
     int sock = *(int*)context;
     char message[256]  = "instruction: make board";
 
-
-    // sem_wait(&lock);
-    //     sprintf(numero, "%d", client_counter); 
-    // sem_post(&lock);
-
-    
-    
-    // while(1)
-    // {
-        memset(client_response, 0, sizeof(client_response)); // clean string
-        // recv(sock, &client_response, sizeof(client_response), 0);
-        // printf("client number %s sent: '%s' \n", numero, client_response);
-        if (send(sock, message ,strlen(message) , 0) < 0)
-        {
-            printf("ERROR while sending response to client from worker \n");
-        }
-        recv(sock, &client_response, sizeof(client_response), 0);
-        printf("\n WHAT CLIENT SENT: %s\n", client_response);
-        printf("\n WTFFF ! \n");
-    // }
+    memset(client_response, 0, sizeof(client_response)); // clean string
+    if (send(sock, message ,strlen(message) , 0) < 0)
+    {
+        printf("ERROR while sending response to client from worker \n");
+    }
+    recv(sock, &client_response, sizeof(client_response), 0);
     
     return NULL;
 }
