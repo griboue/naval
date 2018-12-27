@@ -57,7 +57,7 @@ void show_game_board()
  * @param ship_type
  * @param message: the serialized message to send to the server (to verify correctness of ship placement)
  */
-void put_ship(char* ship_type, char* message)
+void put_ship(char* message)
 {
 	char position1_read[20];
 	char position2_read[20];
@@ -137,13 +137,7 @@ void put_ship(char* ship_type, char* message)
 	}
 
 	// message to send to the server (serialized in a string message)
-	message[0] = position1_read[0];
-	message[1] = position1_read[1];
-	message[2] = '-';
-	message[3] = position2_read[0];
-	message[4] = position2_read[1];
-	message[5] = '\0';
-
+	message = "I'm ready \0";
 }
 
 /**
