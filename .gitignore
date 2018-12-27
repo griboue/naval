@@ -7,3 +7,7 @@
 !*/
 !*.h
 !Makefile
+
+client/client
+
+server/server
