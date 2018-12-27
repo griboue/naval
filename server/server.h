@@ -1,7 +1,7 @@
 #ifndef SERVER_H  
 #define SERVER_H
 
-void* serverWorker(void* context);
+void* place_boats_worker(void* context);
 int main();
 
 #endif 

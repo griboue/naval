@@ -19,7 +19,7 @@ sem_t lock;
 static int client_counter = 0;
 int client_sockets[2];
 
-void* serverWorker(void* context)
+void* place_boats_worker(void* context)
 {
     char client_response[256]; 
     int sock = *(int*)context;
@@ -72,7 +72,7 @@ int main()
     pthread_t thread_id[2];
     for (int i = 0; i < 2; i++)
     {
-        pthread_create(&(thread_id[i]), NULL, serverWorker, &client_sockets[i]);
+        pthread_create(&(thread_id[i]), NULL, place_boats_worker, &client_sockets[i]);
     }
 
     pthread_join(thread_id[0], NULL);
