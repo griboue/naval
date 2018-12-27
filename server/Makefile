@@ -1,2 +1,2 @@
 client : server.c
-	gcc -Wall server.c -o -g server -lpthread
+	gcc -Wall server.c -g -o server -lpthread
