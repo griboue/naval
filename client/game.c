@@ -98,35 +98,41 @@ void put_ship(char* ship_type, char* message)
 				error =0;
 		} while(error);
 
-		// game_board[position1_y][position1_x] = boats_sign[i];
-		// game_board[position2_y][position2_x] = boats_sign[i];
-
 		//Inscription des signes du bateau dans le tableau
-		if (position1_y==position2_y) { //the boat is on a line
+		if (position1_y==position2_y) //the boat is on a line
+		{
 			if (position1_x<position2_x)  //boat left to right
+			{
 				for (size_t j = position1_x; j <= position2_x; j++)
 				{
 					game_board[position1_y][j] = boats_sign[i];
 				}
+			}
 			else  //boat right to left
-				for (size_t j = position2_x; j >= position1_x; j--)
+			{
+				for (size_t j = position2_x; j <= position1_x; j++)
 				{
 					game_board[position1_y][j] = boats_sign[i];
 				}
+			}
 		}
-		else { //the boat is on a column
+		else //the boat is on a column
+		{
 			if (position1_y<position2_y) //boat top to bot
+			{
 				for (size_t j = position1_y; j <= position2_y; j++)
 				{
 					game_board[j][position1_x] = boats_sign[i];
 				}
+			}
 			else //boat bot to top
-				for (size_t j = position2_y; j >= position1_y; j--)
+			{
+				for (size_t j = position2_y; j <= position1_y; j++)
 				{
 					game_board[j][position1_x] = boats_sign[i];
 				}
+			}
 		}
-
 		show_game_board();
 	}
 
