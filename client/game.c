@@ -40,7 +40,7 @@ void show_game_board()
 		printf(" ");
 		printf("%c", (j+65));         // for UPPERCASE asci table
 	}
-	printf("\t\t");
+	printf("\t\t  ");
 	for (int j = 0; j < 10; j++)
 	{
 		printf(" ");
