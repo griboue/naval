@@ -108,4 +108,77 @@ void connect_to_server()
 	{
 		puts("Send failed");
 	}
+
+	while (1) {
+		recv(network_socket, &server_reponse, sizeof(server_reponse), 0);
+
+		//Final condition
+		if (strcmp(server_reponse, "You win") == 0) {
+			printf("You win");
+			return;
+		}
+		if (strcmp(server_reponse, "You loose") == 0) {
+			printf("You loose");
+			return;
+		}
+
+		if (strcmp(server_reponse, "Your shoot?") == 0) {
+			show_game_board();
+
+			char position1_read[20];
+			int position_y;
+			int position_x;
+
+			int position1_y;
+			int position1_x;
+			int position2_y;
+			int position2_x;
+
+			do
+			{
+				printf("\033[1;34m"); // print to blue
+				printf("Your shoot?");
+				printf("\033[0m;"); //reset color
+
+				scanf("%s", position1_read);
+				position_x = position1_read[0] - 65; // convert ASCII CHAR LETTER to int (from 0 to 9 max)
+				position_y = position1_read[1] - 48; // convert ASCII CHAR NUMBER to int (from 0 to 9 max)
+			} while (position_x >= 'A' && position_x <= 'J' && position_y >= 0 && position_y <= 9);
+			message[0] = position_x;
+			message[1] = position_y;
+
+			send(network_socket, message, strlen(message), 0);
+			//On attends la reponse du serveur (tir à l'eau, touché, coulé)
+			recv(network_socket, &server_reponse, sizeof(server_reponse), 0);
+			if (strcmp(server_reponse, "A l'eau") == 0) {
+				game_board[position_x][position_y] = 'X';
+			}
+			if (strcmp(server_reponse, "Touché") == 0) {
+				game_board[position_x][position_y] = 'x';
+			}
+			if (strcmp(server_reponse, "Coulé") == 0) {
+				game_board[position_x][position_y] = 'x';
+				//on recoit maintenant les coordonnées du bateau
+				recv(network_socket, &server_reponse, sizeof(server_reponse), 0);
+				position1_x = server_reponse[0] - 65;
+				position1_y = server_reponse[1] - 48;
+				position2_x = server_reponse[3] - 65;
+				position2_y = server_reponse[4] - 48;
+				//TODO : Colorier toutes les petites croix entre ces 2 coordonnées en rouge :) (mais la j'ai la flemme)
+			}
+		}
+
+		if (strcmp(server_reponse, "Ya koi ici?") == 0) { //on doit renvoyer la case de notre tableau
+			recv(network_socket, &server_reponse, sizeof(server_reponse), 0);
+
+			int position_y;
+			int position_x;
+
+			position_x = server_reponse[0] - 65;
+			position_y = server_reponse[1] - 48;
+
+			message[0] = game_board[position_x][position_y];
+			send(network_socket, message, strlen(message), 0);
+		}
+	}
 }

@@ -38,13 +38,13 @@ void show_game_board()
 	for (int j = 0; j < 10; j++)
 	{
 		printf(" ");
-		printf("%c", (j+65));         // for UPPERCASE asci table
+		printf("%c", (j + 65));         // for UPPERCASE asci table
 	}
 	printf("\t\t  ");
 	for (int j = 0; j < 10; j++)
 	{
 		printf(" ");
-		printf("%c", (j+65));         // for UPPERCASE asci table
+		printf("%c", (j + 65));         // for UPPERCASE asci table
 	}
 
 	printf("\n");
@@ -88,7 +88,7 @@ void put_ship(char* message)
 	int position2_x;
 	int error;
 
-	for (size_t i = 0; i <number_boats; i++)
+	for (size_t i = 0; i < number_boats; i++)
 	{
 		printf("\033[1;34m"); // print to blue
 		printf("You have to put a %s on the board ! (size of %d)",boats[i], boats_size[i]);
@@ -98,17 +98,17 @@ void put_ship(char* message)
 		{
 			printf("\n \n Pease indicate the FIRST cell of the ship:(ex. 'B6') \n");
 			scanf("%s", position1_read);
-			position1_x = position1_read[0]-65; // convert ASCII CHAR LETTER to int (from 0 to 9 max)
-			position1_y = position1_read[1]-48; // convert ASCII CHAR NUMBER to int (from 0 to 9 max)
+			position1_x = position1_read[0] - 65; // convert ASCII CHAR LETTER to int (from 0 to 9 max)
+			position1_y = position1_read[1] - 48; // convert ASCII CHAR NUMBER to int (from 0 to 9 max)
 
 			printf("\n \n Pease indicate the LAST cell of the ship:(ex. 'B6') \n");
 			scanf("%s", position2_read);
-			position2_x = position2_read[0]-65; // convert ASCII CHAR LETTER to int (from 0 to 9 max)
-			position2_y = position2_read[1]-48; // convert ASCII CHAR NUMBER to int (from 0 to 9 max)
+			position2_x = position2_read[0] - 65; // convert ASCII CHAR LETTER to int (from 0 to 9 max)
+			position2_y = position2_read[1] - 48; // convert ASCII CHAR NUMBER to int (from 0 to 9 max)
 
 			//Check is size is legit
 			int size = length_of_ship(position1_y, position1_x, position2_y, position2_x);
-			if (size!=boats_size[i])
+			if (size != boats_size[i])
 			{
 				error = 1;
 				printf("\033[1;34m"); // print to red
@@ -116,13 +116,13 @@ void put_ship(char* message)
 				printf("\033[0m;"); //reset color
 			}
 			else
-				error =0;
+				error = 0;
 		} while(error);
 
 		//Inscription des signes du bateau dans le tableau
-		if (position1_y==position2_y) //the boat is on a line
+		if (position1_y == position2_y) //the boat is on a line
 		{
-			if (position1_x<position2_x)  //boat left to right
+			if (position1_x < position2_x)  //boat left to right
 			{
 				for (size_t j = position1_x; j <= position2_x; j++)
 				{
@@ -139,7 +139,7 @@ void put_ship(char* message)
 		}
 		else //the boat is on a column
 		{
-			if (position1_y<position2_y) //boat top to bot
+			if (position1_y < position2_y) //boat top to bot
 			{
 				for (size_t j = position1_y; j <= position2_y; j++)
 				{
@@ -167,18 +167,18 @@ void put_ship(char* message)
  * Returns -1 if it is not possbile (ex: diagonals, outside the table ...)
  **/
 int length_of_ship(int position1_y, int position1_x, int position2_y, int position2_x){
-	if(position1_x!=position2_x && position1_y!=position2_y)     //diagonals
+	if(position1_x != position2_x && position1_y != position2_y) //diagonals
 		return -1;
-	if (position1_y==position2_y) { //the boat is on a line
-		if (position1_x<position2_x)  //boat left to right
-			return position2_x-position1_x + 1;
+	if (position1_y == position2_y) { //the boat is on a line
+		if (position1_x < position2_x) //boat left to right
+			return position2_x - position1_x + 1;
 		else  //boat right to left
-			return position1_x-position2_x + 1;
+			return position1_x - position2_x + 1;
 	}
 	else { //the boat is on a column
-		if (position1_y<position2_y) //boat top to bot
-			return position2_y-position1_y + 1;
+		if (position1_y < position2_y) //boat top to bot
+			return position2_y - position1_y + 1;
 		else //boat bot to top
-			return position1_y-position2_y + 1;
+			return position1_y - position2_y + 1;
 	}
 }
