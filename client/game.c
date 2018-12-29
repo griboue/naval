@@ -7,6 +7,7 @@
 
 
 char game_board[10][10];
+char enemy_game_board[10][10];
 
 void construct_game_board()
 {
@@ -15,6 +16,7 @@ void construct_game_board()
 		for (int j = 0; j < 10; j++)
 		{
 			game_board[i][j] = '-';
+			enemy_game_board[i][j] = '-';
 		}
 	}
 }
@@ -27,13 +29,24 @@ void show_game_board()
 {
 	fflush(stdout);
 	printf("\n \n \n");
-	printf("Your game board: \n \n");
-	printf("  ");
+	printf("Your game board: ");
+	printf("\t\t");
+	printf("The enemy board: ");
+	printf("\n \n  ");
+
+
 	for (int j = 0; j < 10; j++)
 	{
 		printf(" ");
 		printf("%c", (j+65));         // for UPPERCASE asci table
 	}
+	printf("\t\t");
+	for (int j = 0; j < 10; j++)
+	{
+		printf(" ");
+		printf("%c", (j+65));         // for UPPERCASE asci table
+	}
+
 	printf("\n");
 	for (int i = 0; i < 10; i++)
 	{
@@ -43,6 +56,14 @@ void show_game_board()
 			printf("%c", game_board[i][j]);
 			printf(" ");
 		}
+		printf("\t\t");
+		printf(" %d ", i);
+		for (int j = 0; j < 10; j++)
+		{
+			printf("%c", enemy_game_board[i][j]);
+			printf(" ");
+		}
+
 		printf("\n");
 	}
 	printf("\n \n");
