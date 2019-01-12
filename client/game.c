@@ -88,11 +88,12 @@ void put_ship(char* message)
 	int position2_x;
 	int error;
 
-	for (size_t i = 0; i < number_boats; i++)
-	{
-		printf("\033[1;34m"); // print to blue
-		printf("You have to put a %s on the board ! (size of %d)",boats[i], boats_size[i]);
-		printf("\033[0m;"); //reset color
+    //for (size_t i = 0; i < number_boats; i++)
+    for (size_t i = 0; i < 1; i++) //THIS IS FOR TEST WITH ONLY ONE BOAT
+    {
+        printf("\033[1;34m"); // print to blue
+        printf("You have to put a %s on the board ! (size of %d)",boats[i], boats_size[i]);
+        printf("\033[0m;"); //reset color
 
 		do
 		{
