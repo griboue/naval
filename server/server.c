@@ -59,9 +59,9 @@ int main()
     server_address.sin_port = htons(PORT);
     server_address.sin_addr.s_addr = INADDR_ANY;
 
-	// bind the socket to IP and port
-	bind(server_socket, (struct sockaddr*) &server_address, sizeof(server_address));
-	listen(server_socket, MAX_CONNECTIONS);
+    // bind the socket to IP and port
+    bind(server_socket, (struct sockaddr*) &server_address, sizeof(server_address));
+    listen(server_socket, MAX_CONNECTIONS);
 
     int client_socket;
     int i = 0;
@@ -73,7 +73,7 @@ int main()
         printf("new client ! \n");
     }
 
-	printf("\n WE COULD LAUNCH THE GAME BECAUSE 2 PLAYERS ! \n");
+    printf("\n WE COULD LAUNCH THE GAME BECAUSE 2 PLAYERS ! \n");
 
     pthread_t thread_id[2];
     for (int i = 0; i < 2; i++)
@@ -119,35 +119,6 @@ int main()
     // system pause to wait for other thread to terminate
     int read;
     scanf("%d", &read);
-
-	int game_finish = 0;
-	int joueur = 1;
-	while (game_finish != 1) {
-		int other_joueur;
-		if (joueur == 1) { // On switch de joueur (de tour)
-			joueur = 0;
-			other_joueur = 1;
-		}
-		else {
-			joueur = 1;
-			other_joueur = 0;
-		}
-		message = "Your shoot?";
-		send(client_sockets[joueur], message, strlen(message), 0); //Server to J1 : Your shoot?
-		recv(client_sockets[joueur], &client_response, sizeof(client_response), 0); //J1 to server : B3
-		message = "Ya koi ici?";
-		send(client_sockets[other_joueur], message, strlen(message), 0); //Server TO J2 : Ya koi ici?
-		message = client_response;
-		send(client_sockets[other_joueur], message, strlen(message), 0); //Server TO J2 : B3
-		recv(client_sockets[other_joueur], &client_response, sizeof(client_response), 0); // J2 to server : -
-		if (client_response[0] == '-') {
-			message = "A l'eau";
-		}
-		else{
-			message = "Touché";
-		}
-		send(client_sockets[joueur], message, strlen(message), 0); //Server to J1 : A l'eau
-	}
 
     return 0;
 }
