@@ -166,13 +166,13 @@ void connect_to_server()
             memset(server_reponse, 0, sizeof(server_reponse));                     // clean string
             recv(network_socket, &server_reponse, sizeof(server_reponse), 0);
             if (strcmp(server_reponse, "A l'eau") == 0) {
-                game_board[position_x][position_y] = 'X';
+                enemy_game_board[position_y][position_x] = 'X';
             }
             if (strcmp(server_reponse, "Touché") == 0) {
-                game_board[position_x][position_y] = 'x';
+                enemy_game_board[position_y][position_x] = 'x';
             }
             if (strcmp(server_reponse, "Coulé") == 0) {
-                game_board[position_x][position_y] = 'x';
+                enemy_game_board[position_y][position_x] = 'x';
                 //on recoit maintenant les coordonnées du bateau
                 recv(network_socket, &server_reponse, sizeof(server_reponse), 0);
                 position1_x = server_reponse[0] - 65;
@@ -181,6 +181,7 @@ void connect_to_server()
                 position2_y = server_reponse[4] - 48;
                 //TODO : Colorier toutes les petites croix entre ces 2 coordonnées en rouge :) (mais la j'ai la flemme)
             }
+            show_game_board();
         }
 
         if (strcmp(server_reponse, "Ya koi ici?") == 0) { //on doit renvoyer la case de notre tableau
@@ -194,8 +195,13 @@ void connect_to_server()
             position_x = server_reponse[0] - 65;
             position_y = server_reponse[1] - 48;
 
-            message = game_board[position_x][position_y];
-            printf("We have that here : %s\n", message);
+            //memset(message, 0, 1024);             // clean string
+            //message = "+\0";
+            printf("%c\n", game_board[position_x][position_y]);
+            // strcpy(message, game_board[position_x][position_y]);
+            message = (char*)malloc(sizeof(char));
+            *message = game_board[position_x][position_y];
+            printf("We have that at %c %c : %s\n",server_reponse[0],server_reponse[1], message);
             send(network_socket, message, strlen(message), 0);
         }
     }
