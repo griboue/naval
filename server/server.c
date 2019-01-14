@@ -37,6 +37,7 @@ void* place_boats_worker(void* context)
     }
     printf("Sock : %d\n",sock);
     recv(sock, &client_response, sizeof(client_response), 0);
+    printf("Respsonse : %s\n", client_response);
     puts("Thread finish");
     return NULL;
 }
@@ -45,7 +46,7 @@ void* place_boats_worker(void* context)
 
 int main()
 {
-    message = malloc(sizeof(char));
+    message = malloc(sizeof(char)*1024);
     printf("Waiting for incoming connections ...\n");
     sem_init(&lock, 0, 1);
 
@@ -100,20 +101,36 @@ int main()
             other_joueur = 0;
         }
         message = "Your shoot?";
+
         send(client_sockets[joueur], message, strlen(message), 0); //Server to J1 : Your shoot?
+        printf("Message send : %s\n", message);
+
+        memset(client_response, 0, sizeof(client_response)); // clean string
         recv(client_sockets[joueur], &client_response, sizeof(client_response), 0); //J1 to server : B3
+        printf("Message receive : %s\n", client_response);
+
         message = "Ya koi ici?";
         send(client_sockets[other_joueur], message, strlen(message), 0); //Server TO J2 : Ya koi ici?
+        printf("Message send : %s\n", message);
+
         message = client_response;
         send(client_sockets[other_joueur], message, strlen(message), 0); //Server TO J2 : B3
+        printf("Message send : %s\n", message);
+
+        memset(client_response, 0, sizeof(client_response)); // clean string
         recv(client_sockets[other_joueur], &client_response, sizeof(client_response), 0); // J2 to server : -
+        printf("Message receive : %s\n", client_response);
+
         if (client_response[0] == '-') {
             message = "A l'eau";
         }
         else{
             message = "Touché";
         }
+
         send(client_sockets[joueur], message, strlen(message), 0); //Server to J1 : A l'eau
+        printf("Message send : %s\n", message);
+
     }
 
     // system pause to wait for other thread to terminate
