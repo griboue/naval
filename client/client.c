@@ -45,7 +45,7 @@ void proceed_selection()
     }
     else if (choice == 3)
     {
-        printf("\n You selected option 2 \n");
+        play_against_ia();
     }
 }
 
@@ -245,4 +245,13 @@ void connect_to_server()
             send(network_socket, message, strlen(message), 0);
         }
     }
+}
+
+void play_against_ia()
+{
+    printf("\n in the function play against IA \n");
+    construct_ia_game_board();
+    generate_ia_board();
+
+    show_ia_game_board();
 }

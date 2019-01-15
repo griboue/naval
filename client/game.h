@@ -13,5 +13,8 @@ void show_game_board();
 void put_ship(char** message);
 int length_of_ship(int position1_y, int position1_x, int position2_y, int position2_x);
 
+void generate_ia_board();
+void construct_ia_game_board();
+void show_ia_game_board();
 
 #endif

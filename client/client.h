@@ -18,5 +18,6 @@ void connect_to_server();
 
 
 // Option 3
+void play_against_ia();
 
 #endif 
