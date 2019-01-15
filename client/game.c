@@ -7,7 +7,9 @@
 
 
 char game_board[10][10];
+char game_board_color[10][10];
 char enemy_game_board[10][10];
+char enemy_game_board_color[10][10];
 
 void construct_game_board()
 {
@@ -16,7 +18,9 @@ void construct_game_board()
         for (int j = 0; j < 10; j++)
         {
             game_board[i][j] = '-';
+            game_board_color[i][j] = 'w';
             enemy_game_board[i][j] = '-';
+            enemy_game_board_color[i][j] = 'w';
         }
     }
 }
@@ -53,14 +57,28 @@ void show_game_board()
         printf(" %d ", i);
         for (int j = 0; j < 10; j++)
         {
+            if (game_board_color[i][j]=='r') {
+                printf("\033[31m");        // print to red
+            }
+            if (game_board_color[i][j]=='g') {
+                printf("\033[32m");        // print to green
+            }
             printf("%c", game_board[i][j]);
+            printf("\033[0m");            //reset color
             printf(" ");
         }
         printf("\t\t");
         printf(" %d ", i);
         for (int j = 0; j < 10; j++)
         {
+            if (enemy_game_board_color[i][j]=='r') {
+                printf("\033[31m");            // print to red
+            }
+            if (enemy_game_board_color[i][j]=='g') {
+                printf("\033[32m");            // print to green
+            }
             printf("%c", enemy_game_board[i][j]);
+            printf("\033[0m");            //reset color
             printf(" ");
         }
 
