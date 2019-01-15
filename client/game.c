@@ -219,7 +219,7 @@ void show_ia_game_board()
 {
     fflush(stdout);
     printf("\n \n \n");
-    printf("Your game board: \n \n");
+    printf("AI game board: \n \n");
     printf("  ");
     for (int j = 0; j < 10; j++)
     {
