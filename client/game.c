@@ -5,7 +5,6 @@
 #include "game.h"
 #include "data.h"
 
-
 char game_board[10][10];
 char game_board_color[10][10];
 char enemy_game_board[10][10];
@@ -106,8 +105,7 @@ void put_ship(char** message)
     int position2_x;
     int error;
 
-    //for (size_t i = 0; i < number_boats; i++)
-    for (size_t i = 0; i < 1; i++) //THIS IS FOR TEST WITH ONLY ONE BOAT
+    for (size_t i = 0; i < number_boats; i++)
     {
         printf("\033[1;34m"); // print to blue
         printf("You have to put a %s on the board ! (size of %d)",boats[i], boats_size[i]);
@@ -137,6 +135,10 @@ void put_ship(char** message)
             else
                 error = 0;
         } while(error);
+
+        //On inscrit les coordonnées dans un tableau pour pouvoir les avoirs facilement par la suite
+        boats_coordinates[i][0] = position1_read;
+        boats_coordinates[i][1] = position2_read;
 
         //Inscription des signes du bateau dans le tableau
         if (position1_y == position2_y) //the boat is on a line
@@ -200,4 +202,17 @@ int length_of_ship(int position1_y, int position1_x, int position2_y, int positi
         else //boat bot to top
             return position1_y - position2_y + 1;
     }
+}
+
+int get_coordinates(char sign, char* message){
+    for (size_t i = 0; i < number_boats; i++) {
+        if (sign == boats_sign[i]) {
+            free(message);
+            message = (char*)malloc(4*sizeof(char));
+            *message = boats_coordinates[i];
+            return 0;
+            break;
+        }
+    }
+    return -1;
 }

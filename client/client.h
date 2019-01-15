@@ -1,4 +1,4 @@
-#ifndef CLIENT_H_  
+#ifndef CLIENT_H_
 #define CLIENT_H_
 
 
@@ -19,4 +19,4 @@ void connect_to_server();
 
 // Option 3
 
-#endif 
+#endif

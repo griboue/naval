@@ -8,9 +8,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-
 #include "client.h"
 #include "game.h"
+//#include "data.h"
 
 
 int main(int argc, char const *argv[])
@@ -171,6 +171,10 @@ void connect_to_server()
             if (strcmp(server_reponse, "Touché") == 0) {
                 enemy_game_board[position_y][position_x] = 'x';
                 enemy_game_board_color[position_y][position_x] = 'g';
+
+                //on recoit les coordonnées complètes maintenant
+                memset(server_reponse, 0, sizeof(server_reponse));                                     // clean string
+                recv(network_socket, &server_reponse, sizeof(server_reponse), 0);
             }
             if (strcmp(server_reponse, "Coulé") == 0) {
                 enemy_game_board[position_y][position_x] = 'x';
@@ -235,14 +239,27 @@ void connect_to_server()
             //message = "+\0";
             printf("%c\n", game_board[position_x][position_y]);
             // strcpy(message, game_board[position_x][position_y]);
+            free(message);
             message = (char*)malloc(sizeof(char));
-            *message = game_board[position_y][position_x];
+
+            if (game_board[position_y][position_x] == 'x' || game_board[position_y][position_x]=='X') {//Si le joueur est con et tire 2 fois au même endroit
+                *message = '-';
+            }
+            else{
+                *message = game_board[position_y][position_x];
+            }
+
             if (game_board[position_y][position_x] == '-') {
                 game_board[position_y][position_x] = 'X';
             }
             game_board_color[position_y][position_x] = 'r';
             printf("We have that at %c%c : %s\n",server_reponse[0],server_reponse[1], message);
             send(network_socket, message, strlen(message), 0);
+
+            if (*message !='-') { //il a touché un truc donc faut envoyer les coordonnées du bateau
+                get_coordinates(message[0], message);
+                send(network_socket, message, strlen(message), 0);
+            }
         }
     }
 }
