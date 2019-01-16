@@ -216,7 +216,6 @@ int length_of_ship(int position1_y, int position1_x, int position2_y, int positi
     }
 }
 
-
 int get_coordinates(char sign, char **message)
 {
     for (size_t i = 0; i < 1; i++)
@@ -237,7 +236,6 @@ int get_coordinates(char sign, char **message)
         }
     }
     return -1;
-
 }
 
 // ------- UNDER IS THE IA PART ----------
@@ -436,4 +434,4 @@ void make_ia_plays()
             }
         }
     }
-
+}
