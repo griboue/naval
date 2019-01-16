@@ -11,6 +11,7 @@
 #include "client.h"
 #include "game.h"
 
+
 int main(int argc, char const *argv[])
 {
 
@@ -173,12 +174,11 @@ void connect_to_server()
                 enemy_game_board[position_y][position_x] = 'x';
                 enemy_game_board_color[position_y][position_x] = 'g';
 
-                // message = "send server";
-                // send(network_socket, message, strlen(message), 0);
 
                 //on recoit les coordonnées complètes maintenant
                 memset(server_reponse, 0, sizeof(server_reponse)); // clean string
                 recv(network_socket, &server_reponse, sizeof(server_reponse), 0);
+
                 printf("Coord = %s\n", server_reponse);
                 printf("Coord = %d %d, %d %d\n", server_reponse[0], server_reponse[1], server_reponse[2], server_reponse[3]);
 
@@ -190,6 +190,7 @@ void connect_to_server()
                 //On vérifie que toutes les cases soit check entre les coordonnées du bateau
                 printf("Coord = %d %d, %d %d\n", position1_x, position1_y, position2_x, position2_y);
                 printf("estCoule(position1_x, position1_y, position2_x, position2_y) = %d\n", estCoule(position1_x, position1_y, position2_x, position2_y));
+
                 if (estCoule(position1_x, position1_y, position2_x, position2_y) == 1) //bateau coulé
                 {
                     // on colorie toutes les petites croix entre ces 2 coordonnées en rouge :)
@@ -296,7 +297,9 @@ void connect_to_server()
             // strcpy(message, game_board[position_x][position_y]);
 
             // free(message);
+
             message = (char *)malloc(4 * sizeof(char));
+
 
             if (game_board[position_y][position_x] == 'x' || game_board[position_y][position_x] == 'X')
             { //Si le joueur est con et tire 2 fois au même endroit
@@ -306,6 +309,7 @@ void connect_to_server()
             {
                 *message = game_board[position_y][position_x];
             }
+
 
             if (game_board[position_y][position_x] == '-')
             {
@@ -318,7 +322,7 @@ void connect_to_server()
 
             if (*message != '-')
             { //il a touché un truc donc faut envoyer les coordonnées du bateau
-                // memset(message, 0, sizeof(message)); // clean string
+
                 get_coordinates(message[0], &message);
                 printf("Coordonées bateaux: %s\n", message);
                 send(network_socket, message, strlen(message), 0);
@@ -335,6 +339,7 @@ int estCoule(int position1_x, int position1_y, int position2_x, int position2_y)
         {
             for (size_t j = position1_x; j <= position2_x; j++)
             {
+
                 if (enemy_game_board[position1_y][j] != 'x')
                 {
                     printf("Sortie line ->");

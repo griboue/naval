@@ -132,7 +132,6 @@ int main()
         }
 
         send(client_sockets[joueur], message, strlen(message), 0); //Server to J1 : A l'eau
-        printf("Message send : %s\n", message);
 
         if (client_response[0] != '-') //touché on recoit les coordonnées du bateau
         {

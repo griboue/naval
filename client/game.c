@@ -143,6 +143,7 @@ void put_ship(char **message)
         } while (error);
 
         //On inscrit les coordonnées dans un tableau pour pouvoir les avoirs facilement par la suite
+
         boats_coordinates[i][0] = malloc(2 * sizeof(char));
         boats_coordinates[i][1] = malloc(2 * sizeof(char));
         strcpy(boats_coordinates[i][0], position1_read);
@@ -215,6 +216,7 @@ int length_of_ship(int position1_y, int position1_x, int position2_y, int positi
     }
 }
 
+
 int get_coordinates(char sign, char **message)
 {
     for (size_t i = 0; i < 1; i++)
@@ -235,6 +237,7 @@ int get_coordinates(char sign, char **message)
         }
     }
     return -1;
+
 }
 
 // ------- UNDER IS THE IA PART ----------
@@ -433,4 +436,4 @@ void make_ia_plays()
             }
         }
     }
-}
+
