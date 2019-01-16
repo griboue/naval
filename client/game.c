@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "game.h"
 #include "data.h"
@@ -9,6 +10,8 @@ char game_board[10][10];
 char game_board_color[10][10];
 char enemy_game_board[10][10];
 char enemy_game_board_color[10][10];
+
+char ia_game_board[10][10];
 
 void construct_game_board()
 {
@@ -143,6 +146,7 @@ void put_ship(char **message)
         boats_coordinates[i][0] = position1_read;
         boats_coordinates[i][1] = position2_read;
 
+
         //Inscription des signes du bateau dans le tableau
         if (position1_y == position2_y) //the boat is on a line
         {
@@ -210,6 +214,7 @@ int length_of_ship(int position1_y, int position1_x, int position2_y, int positi
     }
 }
 
+
 int get_coordinates(char sign, char **message)
 {
     for (size_t i = 0; i < number_boats; i++)
@@ -224,4 +229,201 @@ int get_coordinates(char sign, char **message)
         }
     }
     return -1;
+
+// ------- UNDER IS THE IA PART ----------
+// ---------------------------------------
+// ---------------------------------------
+
+// Only for debug purposes
+void show_ia_game_board()
+{
+    fflush(stdout);
+    printf("\n \n \n");
+    printf("AI game board: \n \n");
+    printf("  ");
+    for (int j = 0; j < 10; j++)
+    {
+        printf(" ");
+        printf("%c", (j + 65)); // for UPPERCASE asci table
+    }
+    printf("\n");
+    for (int i = 0; i < 10; i++)
+    {
+        printf(" %d ", i);
+        for (int j = 0; j < 10; j++)
+        {
+            printf("%c", ia_game_board[i][j]);
+            printf(" ");
+        }
+        printf("\n");
+    }
+    printf("\n \n");
+    fflush(stdout);
 }
+
+void construct_ia_game_board()
+{
+    fflush(stdout);
+    for (int i = 0; i < 10; i++)
+    {
+        for (int j = 0; j < 10; j++)
+        {
+            ia_game_board[i][j] = '-';
+        }
+    }
+    fflush(stdout);
+}
+
+/**
+ * @brief
+ * This function generate a random board 
+ **/
+void generate_ia_board()
+{
+    // Construct an Empty board first
+    construct_ia_game_board();
+    srand(time(NULL));
+    int position1_x = 0;
+    int position1_y = 0;
+
+    int position2_x = 0;
+    int position2_y = 0;
+    int error = 0;
+    int b = 0;
+    for (b = 0; b < 4; b++)
+    {
+        do
+        {
+            // Generate the first end of the boat
+            position1_x = (rand() % 9) + 1;
+            position1_y = (rand() % 9) + 1;
+
+            // Generate the second end of the boat
+            position2_x = (rand() % 9) + 1;
+            position2_y = (rand() % 9) + 1;
+
+            int size = length_of_ship(position1_y, position1_x, position2_y, position2_x);
+            if (size != boats_size[b] || ia_game_board[position2_y][position2_x] != '-')
+            {
+                error = 1;
+            }
+            else
+            {
+                error = 0;
+
+                // CHECK IF BETWEEN THE 2 POINTS IT IS EMPTY !
+                if (position1_y == position2_y) //the boat is on a line
+                {
+                    if (position1_x < position2_x) //boat left to right
+                    {
+                        for (size_t j = position1_x; j <= position2_x; j++)
+                        {
+                            if (ia_game_board[position1_y][j] != '-')
+                                error = 1;
+                        }
+                    }
+                    else //boat right to left
+                    {
+                        for (size_t j = position2_x; j <= position1_x; j++)
+                        {
+                            if (ia_game_board[position1_y][j] != '-')
+                                error = 1;
+                        }
+                    }
+                }
+                else //the boat is on a column
+                {
+                    if (position1_y < position2_y) //boat top to bot
+                    {
+                        for (size_t j = position1_y; j <= position2_y; j++)
+                        {
+                            if (ia_game_board[j][position1_x] != '-')
+                                error = 1;
+                        }
+                    }
+                    else //boat to top
+                    {
+                        for (size_t j = position2_y; j <= position1_y; j++)
+                        {
+                            if (ia_game_board[j][position1_x] != '-')
+                                error = 1;
+                        }
+                    }
+                }
+            }
+
+        } while (ia_game_board[position1_y][position1_x] != '-' || ia_game_board[position2_y][position2_x] != '-' || error == 1);
+
+        // FILL BETWEEN THE LINES OF THE 2 POINTS
+        if (position1_y == position2_y) //the boat is on a line
+        {
+            if (position1_x < position2_x) //boat left to right
+            {
+                for (size_t j = position1_x; j <= position2_x; j++)
+                {
+                    ia_game_board[position1_y][j] = boats_sign[b];
+                }
+            }
+            else //boat right to left
+            {
+                for (size_t j = position2_x; j <= position1_x; j++)
+                {
+                    ia_game_board[position1_y][j] = boats_sign[b];
+                }
+            }
+        }
+        else //the boat is on a column
+        {
+            if (position1_y < position2_y) //boat top to bot
+            {
+                for (size_t j = position1_y; j <= position2_y; j++)
+                {
+                    ia_game_board[j][position1_x] = boats_sign[b];
+                }
+            }
+            else //boat bot to top
+            {
+                for (size_t j = position2_y; j <= position1_y; j++)
+                {
+                    ia_game_board[j][position1_x] = boats_sign[b];
+                }
+            }
+        }
+
+        ia_game_board[position1_y][position1_x] = boats_sign[b];
+        ia_game_board[position2_y][position2_x] = boats_sign[b];
+    }
+}
+
+void make_ia_plays()
+{
+    srand(time(NULL));
+    int position_x = 0;
+    int position_y = 0;
+
+    int error = 1;
+    
+    while (error == 1)
+    {
+        // Select random point
+        position_x = (rand() % 10);
+        position_y = (rand() % 10);
+
+        // If cell is empty (-)
+        if (game_board[position_y][position_x] == '-')
+        {
+            game_board[position_y][position_x] = 'X';
+            error = 0;
+        }
+        // if cell is not empty
+        else if (game_board[position_y][position_x] != '-')
+        {
+            // if cell not already visited (a X or a boat already shot)
+            if (game_board[position_y][position_x] != 'X' && game_board_color[position_y][position_x] != 'r')
+            {
+                game_board_color[position_y][position_x] = 'r';
+                error = 0;
+            }
+        }
+    }
+
