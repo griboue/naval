@@ -7,10 +7,10 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <pthread.h>
 
 #include "client.h"
 #include "game.h"
-
 
 int main(int argc, char const *argv[])
 {
@@ -29,6 +29,13 @@ void show_menu()
     printf("3) Play against the machine \n\n");
 }
 
+void *launch_server(void *context)
+{
+    system("cd ../server/ && ./server");
+    printf("Server closed");
+    return NULL;
+}
+
 void proceed_selection()
 {
     int choice;
@@ -40,7 +47,10 @@ void proceed_selection()
     }
     else if (choice == 2)
     {
-        printf("\n You selected option 2 \n");
+        pthread_t server;
+        pthread_create(&server, NULL, launch_server, NULL);
+        connect_to_server();
+        // printf("\n You selected option 2 \n");
     }
     else if (choice == 3)
     {
@@ -174,7 +184,6 @@ void connect_to_server()
                 enemy_game_board[position_y][position_x] = 'x';
                 enemy_game_board_color[position_y][position_x] = 'g';
 
-
                 //on recoit les coordonnées complètes maintenant
                 memset(server_reponse, 0, sizeof(server_reponse)); // clean string
                 recv(network_socket, &server_reponse, sizeof(server_reponse), 0);
@@ -300,7 +309,6 @@ void connect_to_server()
 
             message = (char *)malloc(4 * sizeof(char));
 
-
             if (game_board[position_y][position_x] == 'x' || game_board[position_y][position_x] == 'X')
             { //Si le joueur est con et tire 2 fois au même endroit
                 *message = '-';
@@ -309,7 +317,6 @@ void connect_to_server()
             {
                 *message = game_board[position_y][position_x];
             }
-
 
             if (game_board[position_y][position_x] == '-')
             {

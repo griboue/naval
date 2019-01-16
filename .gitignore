@@ -11,3 +11,5 @@
 client/client
 
 server/server
+
+\.vscode/launch\.json

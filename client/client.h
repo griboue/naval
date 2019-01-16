@@ -6,6 +6,7 @@ int main(int argc, char const *argv[]);
 void show_menu();
 void proceed_selection();
 int estCoule(int position1_x, int position1_y, int position2_x, int position2_y);
+void *launch_server(void *context);
 
 // Option 1
 int socket_connection(char *ip, int port);

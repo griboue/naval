@@ -13,6 +13,10 @@ char enemy_game_board_color[10][10];
 
 char ia_game_board[10][10];
 
+/**
+ * @brief
+ * Initialize an empty game board
+ * */
 void construct_game_board()
 {
     for (int i = 0; i < 10; i++)
