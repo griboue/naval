@@ -37,17 +37,16 @@ void show_game_board()
     printf("The enemy board: ");
     printf("\n \n  ");
 
-
     for (int j = 0; j < 10; j++)
     {
         printf(" ");
-        printf("%c", (j + 65));         // for UPPERCASE asci table
+        printf("%c", (j + 65)); // for UPPERCASE asci table
     }
     printf("\t\t  ");
     for (int j = 0; j < 10; j++)
     {
         printf(" ");
-        printf("%c", (j + 65));         // for UPPERCASE asci table
+        printf("%c", (j + 65)); // for UPPERCASE asci table
     }
 
     printf("\n");
@@ -56,28 +55,32 @@ void show_game_board()
         printf(" %d ", i);
         for (int j = 0; j < 10; j++)
         {
-            if (game_board_color[i][j]=='r') {
-                printf("\033[31m");        // print to red
+            if (game_board_color[i][j] == 'r')
+            {
+                printf("\033[31m"); // print to red
             }
-            if (game_board_color[i][j]=='g') {
-                printf("\033[32m");        // print to green
+            if (game_board_color[i][j] == 'g')
+            {
+                printf("\033[32m"); // print to green
             }
             printf("%c", game_board[i][j]);
-            printf("\033[0m");            //reset color
+            printf("\033[0m"); //reset color
             printf(" ");
         }
         printf("\t\t");
         printf(" %d ", i);
         for (int j = 0; j < 10; j++)
         {
-            if (enemy_game_board_color[i][j]=='r') {
-                printf("\033[31m");            // print to red
+            if (enemy_game_board_color[i][j] == 'r')
+            {
+                printf("\033[31m"); // print to red
             }
-            if (enemy_game_board_color[i][j]=='g') {
-                printf("\033[32m");            // print to green
+            if (enemy_game_board_color[i][j] == 'g')
+            {
+                printf("\033[32m"); // print to green
             }
             printf("%c", enemy_game_board[i][j]);
-            printf("\033[0m");            //reset color
+            printf("\033[0m"); //reset color
             printf(" ");
         }
 
@@ -87,7 +90,6 @@ void show_game_board()
     fflush(stdout);
 }
 
-
 /**
  * @brief
  * Put a ship on the global client board
@@ -95,7 +97,7 @@ void show_game_board()
  * @param ship_type
  * @param message: the serialized message to send to the server (to verify correctness of ship placement)
  */
-void put_ship(char** message)
+void put_ship(char **message)
 {
     char position1_read[20];
     char position2_read[20];
@@ -105,10 +107,11 @@ void put_ship(char** message)
     int position2_x;
     int error;
 
-    for (size_t i = 0; i < number_boats; i++)
+    // for (size_t i = 0; i < number_boats; i++)
+    for (size_t i = 0; i < 1; i++)
     {
         printf("\033[1;34m"); // print to blue
-        printf("You have to put a %s on the board ! (size of %d)",boats[i], boats_size[i]);
+        printf("You have to put a %s on the board ! (size of %d)", boats[i], boats_size[i]);
         printf("\033[0m;"); //reset color
 
         do
@@ -129,12 +132,12 @@ void put_ship(char** message)
             {
                 error = 1;
                 printf("\033[1;34m"); // print to red
-                printf("\n This ship must have a size of %d and the actual size is %d",boats_size[i], size);
+                printf("\n This ship must have a size of %d and the actual size is %d", boats_size[i], size);
                 printf("\033[0m;"); //reset color
             }
             else
                 error = 0;
-        } while(error);
+        } while (error);
 
         //On inscrit les coordonnées dans un tableau pour pouvoir les avoirs facilement par la suite
         boats_coordinates[i][0] = position1_read;
@@ -143,14 +146,14 @@ void put_ship(char** message)
         //Inscription des signes du bateau dans le tableau
         if (position1_y == position2_y) //the boat is on a line
         {
-            if (position1_x < position2_x)  //boat left to right
+            if (position1_x < position2_x) //boat left to right
             {
                 for (size_t j = position1_x; j <= position2_x; j++)
                 {
                     game_board[position1_y][j] = boats_sign[i];
                 }
             }
-            else  //boat right to left
+            else //boat right to left
             {
                 for (size_t j = position2_x; j <= position1_x; j++)
                 {
@@ -187,16 +190,19 @@ void put_ship(char** message)
  * This function returns the length between the points passed in parameters
  * Returns -1 if it is not possbile (ex: diagonals, outside the table ...)
  **/
-int length_of_ship(int position1_y, int position1_x, int position2_y, int position2_x){
-    if(position1_x != position2_x && position1_y != position2_y) //diagonals
+int length_of_ship(int position1_y, int position1_x, int position2_y, int position2_x)
+{
+    if (position1_x != position2_x && position1_y != position2_y) //diagonals
         return -1;
-    if (position1_y == position2_y) { //the boat is on a line
+    if (position1_y == position2_y)
+    {                                  //the boat is on a line
         if (position1_x < position2_x) //boat left to right
             return position2_x - position1_x + 1;
-        else  //boat right to left
+        else //boat right to left
             return position1_x - position2_x + 1;
     }
-    else { //the boat is on a column
+    else
+    {                                  //the boat is on a column
         if (position1_y < position2_y) //boat top to bot
             return position2_y - position1_y + 1;
         else //boat bot to top
@@ -204,12 +210,15 @@ int length_of_ship(int position1_y, int position1_x, int position2_y, int positi
     }
 }
 
-int get_coordinates(char sign, char* message){
-    for (size_t i = 0; i < number_boats; i++) {
-        if (sign == boats_sign[i]) {
-            free(message);
-            message = (char*)malloc(4*sizeof(char));
-            *message = boats_coordinates[i];
+int get_coordinates(char sign, char **message)
+{
+    for (size_t i = 0; i < number_boats; i++)
+    {
+        if (sign == boats_sign[i])
+        {
+            // free(message);
+            // message = (char*)malloc(4*sizeof(char));
+            message = boats_coordinates[i];
             return 0;
             break;
         }
