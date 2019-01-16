@@ -1,7 +1,7 @@
 #ifndef DATA_H_
 #define DATA_H_
 
-const char * boats[] = {
+const char *boats[] = {
 	"Destroyers",
 	"Submarines",
 	"Battleships",
@@ -22,7 +22,6 @@ const char boats_sign[] = {
 	'C',
 };
 
-#define number_boats (sizeof (boats) / sizeof (const char *))
-
+#define number_boats (sizeof(boats) / sizeof(const char *))
 
 #endif

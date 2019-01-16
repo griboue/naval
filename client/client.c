@@ -11,6 +11,7 @@
 #include "client.h"
 #include "game.h"
 
+
 int main(int argc, char const *argv[])
 {
 
@@ -172,6 +173,58 @@ void connect_to_server()
             {
                 enemy_game_board[position_y][position_x] = 'x';
                 enemy_game_board_color[position_y][position_x] = 'g';
+
+                message = "send server";
+                send(network_socket, message, strlen(message), 0);
+
+                //on recoit les coordonnées complètes maintenant
+                memset(server_reponse, 0, sizeof(server_reponse)); // clean string
+                recv(network_socket, &server_reponse, sizeof(server_reponse), 0);
+
+                position1_x = server_reponse[0] - 65;
+                position1_y = server_reponse[1] - 48;
+                position2_x = server_reponse[3] - 65;
+                position2_y = server_reponse[4] - 48;
+
+                //On vérifie que toutes les cases soit check entre les coordonnées du bateau
+                if (estCoule(position1_x, position1_y, position2_x, position2_y) == 1) //bateau coulé
+                {
+                    // on colorie toutes les petites croix entre ces 2 coordonnées en rouge :)
+                    if (position1_y == position2_y) //the boat is on a line
+                    {
+                        if (position1_x < position2_x) //boat left to right
+                        {
+                            for (size_t j = position1_x; j <= position2_x; j++)
+                            {
+                                enemy_game_board_color[position1_y][j] = 'r';
+                            }
+                        }
+                        else //boat right to left
+                        {
+                            for (size_t j = position2_x; j <= position1_x; j++)
+                            {
+                                enemy_game_board_color[position1_y][j] = 'r';
+                            }
+                        }
+                    }
+                    else //the boat is on a column
+                    {
+                        if (position1_y < position2_y) //boat top to bot
+                        {
+                            for (size_t j = position1_y; j <= position2_y; j++)
+                            {
+                                enemy_game_board_color[j][position1_x] = 'r';
+                            }
+                        }
+                        else //boat bot to top
+                        {
+                            for (size_t j = position2_y; j <= position1_y; j++)
+                            {
+                                enemy_game_board_color[j][position1_x] = 'r';
+                            }
+                        }
+                    }
+                }
             }
             if (strcmp(server_reponse, "Coulé") == 0)
             {
@@ -238,17 +291,80 @@ void connect_to_server()
             //message = "+\0";
             printf("%c\n", game_board[position_x][position_y]);
             // strcpy(message, game_board[position_x][position_y]);
+
+            // free(message);
             message = (char *)malloc(sizeof(char));
-            *message = game_board[position_y][position_x];
+
+            if (game_board[position_y][position_x] == 'x' || game_board[position_y][position_x] == 'X')
+            { //Si le joueur est con et tire 2 fois au même endroit
+                *message = '-';
+            }
+            else
+            {
+                *message = game_board[position_y][position_x];
+            }
+
+
             if (game_board[position_y][position_x] == '-')
             {
                 game_board[position_y][position_x] = 'X';
             }
+            printf("x=%d,y=%d", position_y, position_x);
             game_board_color[position_y][position_x] = 'r';
             printf("We have that at %c%c : %s\n", server_reponse[0], server_reponse[1], message);
             send(network_socket, message, strlen(message), 0);
+
+            if (*message != '-')
+            { //il a touché un truc donc faut envoyer les coordonnées du bateau
+                get_coordinates(message[0], &message);
+                printf("Coordonées bateaux: %s\n", message);
+                send(network_socket, message, strlen(message), 0);
+            }
         }
     }
+}
+
+int estCoule(int position1_x, int position1_y, int position2_x, int position2_y)
+{
+    if (position1_y == position2_y) //the boat is on a line
+    {
+        if (position1_x < position2_x) //boat left to right
+        {
+            for (size_t j = position1_x; j <= position2_x; j++)
+            {
+                if (enemy_game_board_color[position1_y][j] != 'x')
+                    return 0;
+            }
+        }
+        else //boat right to left
+        {
+            for (size_t j = position2_x; j <= position1_x; j++)
+            {
+                if (enemy_game_board_color[position1_y][j] != 'x')
+                    return 0;
+            }
+        }
+    }
+    else //the boat is on a column
+    {
+        if (position1_y < position2_y) //boat top to bot
+        {
+            for (size_t j = position1_y; j <= position2_y; j++)
+            {
+                if (enemy_game_board_color[j][position1_x] != 'x')
+                    return 0;
+            }
+        }
+        else //boat bot to top
+        {
+            for (size_t j = position2_y; j <= position1_y; j++)
+            {
+                if (enemy_game_board_color[j][position1_x] != 'x')
+                    return 0;
+            }
+        }
+    }
+    return 1;
 }
 
 void play_against_ia()
