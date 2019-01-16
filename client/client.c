@@ -254,16 +254,113 @@ void connect_to_server()
 void play_against_ia()
 {
     printf("\n in the function play against IA \n");
+
+    // Generate IA board and place this ships
     construct_ia_game_board();
     generate_ia_board();
 
-    // construct_game_board();
-    // show_game_board();
-    // char **message;
-    // // memset(message, 0, sizeof(message));
-    // put_ship(&message);
+    // Generate the player board and ask him to place the ships
+    construct_game_board();
+    show_game_board();
+    char **message; // useless variable
+    put_ship(&message);
 
-    // printf("Finish to make board\n");
+    // Launch the game
+    play();
 
-    show_ia_game_board();
+    //show_ia_game_board(); //this is for debug purposes only
+}
+
+void play()
+{
+    fflush(stdout);
+    show_game_board();
+    fflush(stdout);
+    char position1_read[20];
+    int position_y;
+    int position_x;
+
+    int position1_y;
+    int position1_x;
+    int position2_y;
+    int position2_x;
+
+    int game_finish = 0;
+    int joueur = 1;
+
+    while (game_finish != 1)
+    {
+        do
+        {
+            printf("\033[1;34m"); // print to blue
+            printf("\n Your shoot? \n");
+            printf("\033[0m"); //reset color
+
+            scanf("%s", position1_read);
+            position_x = position1_read[0] - 65; // convert ASCII CHAR LETTER to int (from 0 to 9 max)
+            position_y = position1_read[1] - 48; // convert ASCII CHAR NUMBER to int (from 0 to 9 max)
+        } while (position_x >= 'A' && position_x <= 'J' && position_y >= 0 && position_y <= 9);
+
+        if (ia_game_board[position_y][position_x] == '-')
+        {
+            enemy_game_board[position_y][position_x] = 'X';
+        }
+        if (ia_game_board[position_y][position_x] != '-')
+        {
+            enemy_game_board[position_y][position_x] = 'x';
+            enemy_game_board_color[position_y][position_x] = 'g';
+        }
+        // TODO DO IF ALL THE BOAT SUNK !!
+        // if (strcmp(server_reponse, "Coulé") == 0)
+        // {
+        //     enemy_game_board[position_y][position_x] = 'x';
+        //     enemy_game_board_color[position_y][position_x] = 'x';
+        //     //on recoit maintenant les coordonnées du bateau
+        //     position1_x = server_reponse[0] - 65;
+        //     position1_y = server_reponse[1] - 48;
+        //     position2_x = server_reponse[3] - 65;
+        //     position2_y = server_reponse[4] - 48;
+        //     // on colorie toutes les petites croix entre ces 2 coordonnées en rouge :)
+        //     if (position1_y == position2_y) //the boat is on a line
+        //     {
+        //         if (position1_x < position2_x) //boat left to right
+        //         {
+        //             for (size_t j = position1_x; j <= position2_x; j++)
+        //             {
+        //                 enemy_game_board_color[position1_y][j] = 'r';
+        //             }
+        //         }
+        //         else //boat right to left
+        //         {
+        //             for (size_t j = position2_x; j <= position1_x; j++)
+        //             {
+        //                 enemy_game_board_color[position1_y][j] = 'r';
+        //             }
+        //         }
+        //     }
+        //     else //the boat is on a column
+        //     {
+        //         if (position1_y < position2_y) //boat top to bot
+        //         {
+        //             for (size_t j = position1_y; j <= position2_y; j++)
+        //             {
+        //                 enemy_game_board_color[j][position1_x] = 'r';
+        //             }
+        //         }
+        //         else //boat bot to top
+        //         {
+        //             for (size_t j = position2_y; j <= position1_y; j++)
+        //             {
+        //                 enemy_game_board_color[j][position1_x] = 'r';
+        //             }
+        //         }
+        //     }
+        // }
+
+        // IA TURN
+        make_ia_plays();
+        fflush(stdout);
+        show_game_board();
+        fflush(stdout);
+    }
 }

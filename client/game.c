@@ -12,7 +12,6 @@ char enemy_game_board[10][10];
 char enemy_game_board_color[10][10];
 
 char ia_game_board[10][10];
-char ia_game_board_color[10][10];
 
 void construct_game_board()
 {
@@ -372,5 +371,38 @@ void generate_ia_board()
 
         ia_game_board[position1_y][position1_x] = boats_sign[b];
         ia_game_board[position2_y][position2_x] = boats_sign[b];
+    }
+}
+
+void make_ia_plays()
+{
+    srand(time(NULL));
+    int position_x = 0;
+    int position_y = 0;
+
+    int error = 1;
+    
+    while (error == 1)
+    {
+        // Select random point
+        position_x = (rand() % 10);
+        position_y = (rand() % 10);
+
+        // If cell is empty (-)
+        if (game_board[position_y][position_x] == '-')
+        {
+            game_board[position_y][position_x] = 'X';
+            error = 0;
+        }
+        // if cell is not empty
+        else if (game_board[position_y][position_x] != '-')
+        {
+            // if cell not already visited (a X or a boat already shot)
+            if (game_board[position_y][position_x] != 'X' && game_board_color[position_y][position_x] != 'r')
+            {
+                game_board_color[position_y][position_x] = 'r';
+                error = 0;
+            }
+        }
     }
 }
