@@ -143,9 +143,10 @@ void put_ship(char **message)
         } while (error);
 
         //On inscrit les coordonnées dans un tableau pour pouvoir les avoirs facilement par la suite
-        boats_coordinates[i][0] = position1_read;
-        boats_coordinates[i][1] = position2_read;
-
+        boats_coordinates[i][0] = malloc(2 * sizeof(char));
+        boats_coordinates[i][1] = malloc(2 * sizeof(char));
+        strcpy(boats_coordinates[i][0], position1_read);
+        strcpy(boats_coordinates[i][1], position2_read);
 
         //Inscription des signes du bateau dans le tableau
         if (position1_y == position2_y) //the boat is on a line
@@ -214,21 +215,27 @@ int length_of_ship(int position1_y, int position1_x, int position2_y, int positi
     }
 }
 
-
 int get_coordinates(char sign, char **message)
 {
-    for (size_t i = 0; i < number_boats; i++)
+    for (size_t i = 0; i < 1; i++)
+    {
+        printf("Sign = %c, X=%s, Y=%s", boats_sign[i], boats_coordinates[i][0], boats_coordinates[i][1]);
+    }
+    for (size_t i = 0; i < 1; i++) //TODO
     {
         if (sign == boats_sign[i])
         {
-            // free(message);
-            // message = (char*)malloc(4*sizeof(char));
-            message = boats_coordinates[i];
+            *message = (char *)malloc(8 * sizeof(char));
+            // memset(*message, 0, sizeof(*message)); // clean string
+            strcpy(*message, boats_coordinates[i][0]);
+            strcat(*message, boats_coordinates[i][1]);
+            //*message = *boats_coordinates[i];
             return 0;
             break;
         }
     }
     return -1;
+}
 
 // ------- UNDER IS THE IA PART ----------
 // ---------------------------------------
@@ -402,7 +409,7 @@ void make_ia_plays()
     int position_y = 0;
 
     int error = 1;
-    
+
     while (error == 1)
     {
         // Select random point
@@ -426,4 +433,4 @@ void make_ia_plays()
             }
         }
     }
-
+}

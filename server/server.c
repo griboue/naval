@@ -132,22 +132,22 @@ int main()
         }
 
         send(client_sockets[joueur], message, strlen(message), 0); //Server to J1 : A l'eau
+        printf("Message send : %s\n", message);
 
         if (client_response[0] != '-') //touché on recoit les coordonnées du bateau
         {
             memset(client_response, 0, sizeof(client_response));                              // clean string
             recv(client_sockets[other_joueur], &client_response, sizeof(client_response), 0); // J2 to server : B1B2
             printf("Message receive : %s\n", client_response);
-            message = client_response;
+            // char *tmp = client_response;
 
-            memset(client_response, 0, sizeof(client_response));                        // clean string
-            recv(client_sockets[joueur], &client_response, sizeof(client_response), 0); // J1 to server : serveur send
+            // memset(client_response, 0, sizeof(client_response)); // clean string
+            // recv(client_sockets[joueur], NULL, 0, 0);            // J1 to server : serveur send
+            // printf("Message receive : %s\n", client_response);
 
-            send(client_sockets[joueur], message, strlen(message), 0); //Server to J1 : B1B2
-            printf("Message send : %s\n", message);
+            send(client_sockets[joueur], client_response, strlen(client_response), 0); //Server to J1 : B1B2
+            printf("Message send : %s\n", client_response);
         }
-
-        printf("Message send : %s\n", message);
     }
 
     // system pause to wait for other thread to terminate
