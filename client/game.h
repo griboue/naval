@@ -6,7 +6,7 @@ extern char game_board[10][10];
 extern char game_board_color[10][10];
 extern char enemy_game_board[10][10];
 extern char enemy_game_board_color[10][10];
-char *boats_coordinates[1][2];
+char *boats_coordinates[1][2]; //TODO
 extern char ia_game_board[10][10];
 
 
