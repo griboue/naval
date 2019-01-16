@@ -114,12 +114,7 @@ void connect_to_server()
     {
         construct_game_board();
         show_game_board();
-
-        // memset(message, 0, sizeof(message));
         put_ship(&message);
-        printf("Message = %s\n", message);
-
-        printf("Finish to make board\n");
     }
 
     if (send(network_socket, message, strlen(message), 0) < 0)
@@ -131,8 +126,7 @@ void connect_to_server()
     {
         memset(server_reponse, 0, sizeof(server_reponse));
         recv(network_socket, server_reponse, sizeof(server_reponse), 0);
-        //printf("Reponse server : %s\n", server_reponse);
-        //Final condition
+
         if (strcmp(server_reponse, "You win") == 0)
         {
             printf("You win");
@@ -159,6 +153,9 @@ void connect_to_server()
 
             do
             {
+                memset(position1_read, 0, sizeof position1_read);
+
+                // position1_read = "";
                 printf("\033[1;34m"); // print to blue
                 printf("Your shoot?");
                 printf("\033[0m"); //reset color
@@ -166,10 +163,9 @@ void connect_to_server()
                 scanf("%s", position1_read);
                 position_x = position1_read[0] - 65; // convert ASCII CHAR LETTER to int (from 0 to 9 max)
                 position_y = position1_read[1] - 48; // convert ASCII CHAR NUMBER to int (from 0 to 9 max)
-            } while (position_x >= 'A' && position_x <= 'J' && position_y >= 0 && position_y <= 9);
+                printf("x = %d a=%d", position_x, 'A');
+            } while ((position_x < ('A' - 65)) || (position_x > ('J' - 65)) || (position_y < 0) || (position_y > 9));
             message = position1_read;
-            // strcat(message, (char)position_y);
-            // message = position_y;/
 
             send(network_socket, message, strlen(message), 0);
             //On attends la reponse du serveur (tir à l'eau, touché, coulé)
@@ -188,18 +184,12 @@ void connect_to_server()
                 memset(server_reponse, 0, sizeof(server_reponse)); // clean string
                 recv(network_socket, &server_reponse, sizeof(server_reponse), 0);
 
-                printf("Coord = %s\n", server_reponse);
-                printf("Coord = %d %d, %d %d\n", server_reponse[0], server_reponse[1], server_reponse[2], server_reponse[3]);
-
                 position1_x = server_reponse[0] - 65;
                 position1_y = server_reponse[1] - 48;
                 position2_x = server_reponse[2] - 65;
                 position2_y = server_reponse[3] - 48;
 
                 //On vérifie que toutes les cases soit check entre les coordonnées du bateau
-                printf("Coord = %d %d, %d %d\n", position1_x, position1_y, position2_x, position2_y);
-                printf("estCoule(position1_x, position1_y, position2_x, position2_y) = %d\n", estCoule(position1_x, position1_y, position2_x, position2_y));
-
                 if (estCoule(position1_x, position1_y, position2_x, position2_y) == 1) //bateau coulé
                 {
                     // on colorie toutes les petites croix entre ces 2 coordonnées en rouge :)
@@ -288,8 +278,8 @@ void connect_to_server()
             show_game_board();
         }
 
-        if (strcmp(server_reponse, "Ya koi ici?") == 0)
-        { //on doit renvoyer la case de notre tableau
+        if (strcmp(server_reponse, "Ya koi ici?") == 0) //on doit renvoyer la case de notre tableau
+        {
 
             memset(server_reponse, 0, sizeof(server_reponse)); // clean string
             recv(network_socket, &server_reponse, sizeof(server_reponse), 0);
@@ -300,17 +290,10 @@ void connect_to_server()
             position_x = server_reponse[0] - 65;
             position_y = server_reponse[1] - 48;
 
-            //memset(message, 0, 1024);             // clean string
-            //message = "+\0";
-            printf("%c\n", game_board[position_x][position_y]);
-            // strcpy(message, game_board[position_x][position_y]);
-
-            // free(message);
-
             message = (char *)malloc(4 * sizeof(char));
 
-            if (game_board[position_y][position_x] == 'x' || game_board[position_y][position_x] == 'X')
-            { //Si le joueur est con et tire 2 fois au même endroit
+            if (game_board[position_y][position_x] == 'x' || game_board[position_y][position_x] == 'X') //Si le joueur est con et tire 2 fois au même endroit
+            {
                 *message = '-';
             }
             else
@@ -322,22 +305,21 @@ void connect_to_server()
             {
                 game_board[position_y][position_x] = 'X';
             }
-            printf("x=%d,y=%d", position_y, position_x);
             game_board_color[position_y][position_x] = 'r';
-            printf("We have that at %c%c : %s\n", server_reponse[0], server_reponse[1], message);
             send(network_socket, message, strlen(message), 0);
 
-            if (*message != '-')
-            { //il a touché un truc donc faut envoyer les coordonnées du bateau
-
+            if (*message != '-') //il a touché un truc donc faut envoyer les coordonnées du bateau
+            {
                 get_coordinates(message[0], &message);
-                printf("Coordonées bateaux: %s\n", message);
                 send(network_socket, message, strlen(message), 0);
             }
         }
     }
 }
 
+/**
+ * @brief Return 1 if the boat is down or 0 else
+ **/
 int estCoule(int position1_x, int position1_y, int position2_x, int position2_y)
 {
     if (position1_y == position2_y) //the boat is on a line
@@ -346,10 +328,8 @@ int estCoule(int position1_x, int position1_y, int position2_x, int position2_y)
         {
             for (size_t j = position1_x; j <= position2_x; j++)
             {
-
                 if (enemy_game_board[position1_y][j] != 'x')
                 {
-                    printf("Sortie line ->");
                     return 0;
                 }
             }
@@ -360,7 +340,6 @@ int estCoule(int position1_x, int position1_y, int position2_x, int position2_y)
             {
                 if (enemy_game_board[position1_y][j] != 'x')
                 {
-                    printf("Sortie line <-");
                     return 0;
                 }
             }
@@ -374,7 +353,6 @@ int estCoule(int position1_x, int position1_y, int position2_x, int position2_y)
             {
                 if (enemy_game_board[j][position1_x] != 'x')
                 {
-                    printf("Sortie  h->b");
                     return 0;
                 }
             }
@@ -385,7 +363,6 @@ int estCoule(int position1_x, int position1_y, int position2_x, int position2_y)
             {
                 if (enemy_game_board[j][position1_x] != 'x')
                 {
-                    printf("Sortie b->h");
                     return 0;
                 }
             }
