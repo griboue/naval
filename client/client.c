@@ -459,7 +459,7 @@ void play()
         if (all_ia_boats_sunk())
         {
             game_finish = 1;
-            printf("GAME TERMINATED - YOU WIN !!!");
+            printf("\n \nGAME TERMINATED - YOU WIN !!! \n");
         }
         else
         {
@@ -472,7 +472,7 @@ void play()
         if (all_player_boats_sunk())
         {
             game_finish = 1;
-            printf("GAME TERMINATED - YOU LOST !!!");
+            printf("\n \nGAME TERMINATED - YOU LOST !!! \n");
         }
     }
 }
