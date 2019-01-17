@@ -16,5 +16,7 @@ void connect_to_server();
 // Option 3
 void play_against_ia();
 void play();
+int all_ia_boats_sunk();
+int all_player_boats_sunk();
 
 #endif

@@ -11,7 +11,6 @@
 #include "client.h"
 #include "game.h"
 
-
 int main(int argc, char const *argv[])
 {
 
@@ -174,7 +173,6 @@ void connect_to_server()
                 enemy_game_board[position_y][position_x] = 'x';
                 enemy_game_board_color[position_y][position_x] = 'g';
 
-
                 //on recoit les coordonnées complètes maintenant
                 memset(server_reponse, 0, sizeof(server_reponse)); // clean string
                 recv(network_socket, &server_reponse, sizeof(server_reponse), 0);
@@ -300,7 +298,6 @@ void connect_to_server()
 
             message = (char *)malloc(4 * sizeof(char));
 
-
             if (game_board[position_y][position_x] == 'x' || game_board[position_y][position_x] == 'X')
             { //Si le joueur est con et tire 2 fois au même endroit
                 *message = '-';
@@ -309,7 +306,6 @@ void connect_to_server()
             {
                 *message = game_board[position_y][position_x];
             }
-
 
             if (game_board[position_y][position_x] == '-')
             {
@@ -398,7 +394,7 @@ void play_against_ia()
     // Generate the player board and ask him to place the ships
     construct_game_board();
     show_game_board();
-    char **message; // useless variable
+    char *message; // useless variable
     put_ship(&message);
 
     // Launch the game
@@ -416,13 +412,7 @@ void play()
     int position_y;
     int position_x;
 
-    int position1_y;
-    int position1_x;
-    int position2_y;
-    int position2_x;
-
     int game_finish = 0;
-    int joueur = 1;
 
     while (game_finish != 1)
     {
@@ -435,7 +425,7 @@ void play()
             scanf("%s", position1_read);
             position_x = position1_read[0] - 65; // convert ASCII CHAR LETTER to int (from 0 to 9 max)
             position_y = position1_read[1] - 48; // convert ASCII CHAR NUMBER to int (from 0 to 9 max)
-        } while (position_x >= 'A' && position_x <= 'J' && position_y >= 0 && position_y <= 9);
+        } while ((position_x < ('A' - 65)) || (position_x > ('J' - 65)) || (position_y < 0) || (position_y > 9));
 
         if (ia_game_board[position_y][position_x] == '-')
         {
@@ -445,58 +435,102 @@ void play()
         {
             enemy_game_board[position_y][position_x] = 'x';
             enemy_game_board_color[position_y][position_x] = 'g';
+            for (int v = 0; v < 4; v++)
+            {
+                if (estCoule(ia_boats_coordinates[v][0], ia_boats_coordinates[v][1], ia_boats_coordinates[v][2], ia_boats_coordinates[v][3]))
+                {
+                    // on colorie toutes les petites croix entre ces 2 coordonnées en rouge :)
+                    if (ia_boats_coordinates[v][1] == ia_boats_coordinates[v][3]) //the boat is on a line
+                    {
+                        if (ia_boats_coordinates[v][0] < ia_boats_coordinates[v][2]) //boat left to right
+                        {
+                            for (size_t j = ia_boats_coordinates[v][0]; j <= ia_boats_coordinates[v][2]; j++)
+                            {
+                                enemy_game_board_color[ia_boats_coordinates[v][1]][j] = 'r';
+                            }
+                        }
+                        else //boat right to left
+                        {
+                            for (size_t j = ia_boats_coordinates[v][2]; j <= ia_boats_coordinates[v][0]; j++)
+                            {
+                                enemy_game_board_color[ia_boats_coordinates[v][1]][j] = 'r';
+                            }
+                        }
+                    }
+                    else //the boat is on a column
+                    {
+                        if (ia_boats_coordinates[v][1] < ia_boats_coordinates[v][3]) //boat top to bot
+                        {
+                            for (size_t j = ia_boats_coordinates[v][1]; j <= ia_boats_coordinates[v][3]; j++)
+                            {
+                                enemy_game_board_color[j][ia_boats_coordinates[v][0]] = 'r';
+                            }
+                        }
+                        else //boat bot to top
+                        {
+                            for (size_t j = ia_boats_coordinates[v][3]; j <= ia_boats_coordinates[v][1]; j++)
+                            {
+                                enemy_game_board_color[j][ia_boats_coordinates[v][0]] = 'r';
+                            }
+                        }
+                    }
+                    enemy_game_board_color[ia_boats_coordinates[v][1]][ia_boats_coordinates[v][0]] = 'r';
+                    enemy_game_board_color[ia_boats_coordinates[v][3]][ia_boats_coordinates[v][2]] = 'r';
+                }
+            }
         }
-        // TODO DO IF ALL THE BOAT SUNK !!
-        // if (strcmp(server_reponse, "Coulé") == 0)
-        // {
-        //     enemy_game_board[position_y][position_x] = 'x';
-        //     enemy_game_board_color[position_y][position_x] = 'x';
-        //     //on recoit maintenant les coordonnées du bateau
-        //     position1_x = server_reponse[0] - 65;
-        //     position1_y = server_reponse[1] - 48;
-        //     position2_x = server_reponse[3] - 65;
-        //     position2_y = server_reponse[4] - 48;
-        //     // on colorie toutes les petites croix entre ces 2 coordonnées en rouge :)
-        //     if (position1_y == position2_y) //the boat is on a line
-        //     {
-        //         if (position1_x < position2_x) //boat left to right
-        //         {
-        //             for (size_t j = position1_x; j <= position2_x; j++)
-        //             {
-        //                 enemy_game_board_color[position1_y][j] = 'r';
-        //             }
-        //         }
-        //         else //boat right to left
-        //         {
-        //             for (size_t j = position2_x; j <= position1_x; j++)
-        //             {
-        //                 enemy_game_board_color[position1_y][j] = 'r';
-        //             }
-        //         }
-        //     }
-        //     else //the boat is on a column
-        //     {
-        //         if (position1_y < position2_y) //boat top to bot
-        //         {
-        //             for (size_t j = position1_y; j <= position2_y; j++)
-        //             {
-        //                 enemy_game_board_color[j][position1_x] = 'r';
-        //             }
-        //         }
-        //         else //boat bot to top
-        //         {
-        //             for (size_t j = position2_y; j <= position1_y; j++)
-        //             {
-        //                 enemy_game_board_color[j][position1_x] = 'r';
-        //             }
-        //         }
-        //     }
-        // }
+        if (all_ia_boats_sunk())
+        {
+            game_finish = 1;
+            printf("GAME TERMINATED - YOU WIN !!!");
+        }
+        else 
+        {
+            // IA TURN
+            make_ia_plays();
+            fflush(stdout);
+            show_game_board();
+            fflush(stdout);
+        }
+        if (all_player_boats_sunk())
+        {
+            game_finish = 1;
+            printf("GAME TERMINATED - YOU LOST !!!");
+        }
 
-        // IA TURN
-        make_ia_plays();
-        fflush(stdout);
-        show_game_board();
-        fflush(stdout);
     }
+}
+
+int all_ia_boats_sunk()
+{
+    int counter = 0;
+    for (int v = 0; v < 4; v++)
+    {
+        if (estCoule(ia_boats_coordinates[v][0], ia_boats_coordinates[v][1], ia_boats_coordinates[v][2], ia_boats_coordinates[v][3]))
+        {
+            counter++;
+        }
+    }
+    if (counter == 4) return 1;
+
+    return 0;
+}
+
+
+int all_player_boats_sunk()
+{
+    int counter = 0;
+    for(int i = 0; i < 10; i++)
+    {
+        for(int j = 0; j < 10; j++)
+        {
+            if (game_board_color[i][j] == 'r')
+            {
+                counter ++;
+            }
+        }
+    }
+    if (counter == 12) return 1;
+
+    return 0;
 }

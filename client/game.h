@@ -8,7 +8,8 @@ extern char enemy_game_board[10][10];
 extern char enemy_game_board_color[10][10];
 char *boats_coordinates[1][2]; //TODO
 extern char ia_game_board[10][10];
-
+extern int ia_boats_coordinates[4][4]; // the 4 positions (p1x, p1y, p2x, p2y) of the 4 boats
+extern int player_boats_coordinates[4][4];
 
 void construct_game_board();
 void show_game_board();
