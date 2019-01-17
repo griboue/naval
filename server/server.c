@@ -21,6 +21,12 @@ int client_sockets[2];
 char *message;
 char client_response[256];
 
+/**
+ * @brief
+ * This function ask at the client to put the ship on the the board and wait one answer
+ * 
+ * @param context context of the thread
+ * */
 void *place_boats_worker(void *context)
 {
     int sock = *(int *)context;
@@ -31,21 +37,15 @@ void *place_boats_worker(void *context)
     {
         printf("ERROR while sending response to client from worker \n");
     }
-    else
-    {
-        puts("Send sucess");
-    }
-    printf("Sock : %d\n", sock);
+
     recv(sock, &client_response, sizeof(client_response), 0);
-    printf("Respsonse : %s\n", client_response);
-    puts("Thread finish");
     return NULL;
 }
 
 int main()
 {
     message = malloc(sizeof(char) * 1024);
-    printf("Waiting for incoming connections ...\n");
+    printf("Waiting for players ...\n");
     sem_init(&lock, 0, 1);
 
     // socket creation
@@ -69,7 +69,7 @@ int main()
         client_counter++;
         client_sockets[i] = client_socket;
         i++;
-        printf("new client ! \n");
+        printf("We have a new player ! \n");
     }
 
     printf("\n WE COULD LAUNCH THE GAME BECAUSE 2 PLAYERS ! \n");
@@ -77,14 +77,14 @@ int main()
     pthread_t thread_id[2];
     for (int i = 0; i < 2; i++)
     {
-        printf("original sock = %d\n", client_sockets[i]);
+        // printf("original sock = %d\n", client_sockets[i]);
         pthread_create(&(thread_id[i]), NULL, place_boats_worker, &client_sockets[i]);
     }
 
     pthread_join(thread_id[0], NULL);
-    printf("\n WORKERS 1 TERMINATED \n");
+    printf("\n Player 1 has put its boats \n");
     pthread_join(thread_id[1], NULL);
-    printf("\n WORKERS 2 TERMINATED \n");
+    printf("\n Player 2 has put its boats \n");
 
     int game_finish = 0;
     int joueur = 1;
@@ -138,11 +138,6 @@ int main()
             memset(client_response, 0, sizeof(client_response));                              // clean string
             recv(client_sockets[other_joueur], &client_response, sizeof(client_response), 0); // J2 to server : B1B2
             printf("Message receive : %s\n", client_response);
-            // char *tmp = client_response;
-
-            // memset(client_response, 0, sizeof(client_response)); // clean string
-            // recv(client_sockets[joueur], NULL, 0, 0);            // J1 to server : serveur send
-            // printf("Message receive : %s\n", client_response);
 
             send(client_sockets[joueur], client_response, strlen(client_response), 0); //Server to J1 : B1B2
             printf("Message send : %s\n", client_response);
@@ -150,8 +145,8 @@ int main()
     }
 
     // system pause to wait for other thread to terminate
-    int read;
-    scanf("%d", &read);
+    // int read;
+    // scanf("%d", &read);
 
     return 0;
 }

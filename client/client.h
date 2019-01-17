@@ -12,6 +12,7 @@ int socket_connection(char *ip, int port);
 void connect_to_server();
 
 // Option 2
+void *launch_server(void *context);
 
 // Option 3
 void play_against_ia();
