@@ -117,7 +117,7 @@ void put_ship(char **message)
     int error;
 
     // for (size_t i = 0; i < number_boats; i++)
-    for (size_t i = 0; i < 4; i++)
+    for (size_t i = 0; i < 1; i++)
     {
         printf("\033[1;34m"); // print to blue
         printf("You have to put a %s on the board ! (size of %d)", boats[i], boats_size[i]);
@@ -158,9 +158,6 @@ void put_ship(char **message)
         player_boats_coordinates[i][1] = position1_y;
         player_boats_coordinates[i][2] = position2_x;
         player_boats_coordinates[i][3] = position2_y;
-
-
-
 
         //Inscription des signes du bateau dans le tableau
         if (position1_y == position2_y) //the boat is on a line
@@ -420,11 +417,10 @@ void generate_ia_board()
         ia_game_board[position1_y][position1_x] = boats_sign[b];
         ia_game_board[position2_y][position2_x] = boats_sign[b];
 
-
-        ia_boats_coordinates[b][0] =  position1_x;
-        ia_boats_coordinates[b][1] =  position1_y;
-        ia_boats_coordinates[b][2] =  position2_x;
-        ia_boats_coordinates[b][3] =  position2_y;
+        ia_boats_coordinates[b][0] = position1_x;
+        ia_boats_coordinates[b][1] = position1_y;
+        ia_boats_coordinates[b][2] = position2_x;
+        ia_boats_coordinates[b][3] = position2_y;
     }
 }
 

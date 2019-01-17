@@ -163,7 +163,6 @@ void connect_to_server()
                 scanf("%s", position1_read);
                 position_x = position1_read[0] - 65; // convert ASCII CHAR LETTER to int (from 0 to 9 max)
                 position_y = position1_read[1] - 48; // convert ASCII CHAR NUMBER to int (from 0 to 9 max)
-                printf("x = %d a=%d", position_x, 'A');
             } while ((position_x < ('A' - 65)) || (position_x > ('J' - 65)) || (position_y < 0) || (position_y > 9));
             message = position1_read;
 
@@ -228,53 +227,23 @@ void connect_to_server()
                         }
                     }
                 }
-            }
-            if (strcmp(server_reponse, "Coulé") == 0)
-            {
-                enemy_game_board[position_y][position_x] = 'x';
-                enemy_game_board_color[position_y][position_x] = 'x';
-                //on recoit maintenant les coordonnées du bateau
-                recv(network_socket, &server_reponse, sizeof(server_reponse), 0);
-                position1_x = server_reponse[0] - 65;
-                position1_y = server_reponse[1] - 48;
-                position2_x = server_reponse[3] - 65;
-                position2_y = server_reponse[4] - 48;
-                // on colorie toutes les petites croix entre ces 2 coordonnées en rouge :)
-                if (position1_y == position2_y) //the boat is on a line
+
+                if (all_player_boats_sunk() == 1) //Le joueur a gagné
                 {
-                    if (position1_x < position2_x) //boat left to right
-                    {
-                        for (size_t j = position1_x; j <= position2_x; j++)
-                        {
-                            enemy_game_board_color[position1_y][j] = 'r';
-                        }
-                    }
-                    else //boat right to left
-                    {
-                        for (size_t j = position2_x; j <= position1_x; j++)
-                        {
-                            enemy_game_board_color[position1_y][j] = 'r';
-                        }
-                    }
-                }
-                else //the boat is on a column
-                {
-                    if (position1_y < position2_y) //boat top to bot
-                    {
-                        for (size_t j = position1_y; j <= position2_y; j++)
-                        {
-                            enemy_game_board_color[j][position1_x] = 'r';
-                        }
-                    }
-                    else //boat bot to top
-                    {
-                        for (size_t j = position2_y; j <= position1_y; j++)
-                        {
-                            enemy_game_board_color[j][position1_x] = 'r';
-                        }
-                    }
+                    system("clear");
+                    printf("********************************************************************\n");
+                    printf("  #     #  #######  #     #      #     #  ###  #     #      ### \n");
+                    printf("   #   #   #     #  #     #      #  #  #   #   ##    #      ### \n");
+                    printf("    # #    #     #  #     #      #  #  #   #   # #   #      ### \n");
+                    printf("     #     #     #  #     #      #  #  #   #   #  #  #       #  \n");
+                    printf("     #     #     #  #     #      #  #  #   #   #   # #          \n");
+                    printf("     #     #     #  #     #      #  #  #   #   #    ##      ### \n");
+                    printf("     #     #######   #####        ## ##   ###  #     #      ### \n");
+                    printf("********************************************************************\n");
+                    return;
                 }
             }
+
             show_game_board();
         }
 
@@ -307,11 +276,31 @@ void connect_to_server()
             }
             game_board_color[position_y][position_x] = 'r';
             send(network_socket, message, strlen(message), 0);
+            sleep(1);
 
             if (*message != '-') //il a touché un truc donc faut envoyer les coordonnées du bateau
             {
                 get_coordinates(message[0], &message);
                 send(network_socket, message, strlen(message), 0);
+            }
+
+            //We loose ?
+            int counter = 0;
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    if (game_board_color[i][j] == 'r' && game_board[i][j] != '-' && game_board[i][j] != 'x' && game_board[i][j] != 'X')
+                    {
+                        counter++;
+                    }
+                }
+            }
+            if (counter == 2)
+            {
+                system("clear");
+                printf("You loose ...");
+                return;
             }
         }
     }
@@ -472,7 +461,7 @@ void play()
             game_finish = 1;
             printf("GAME TERMINATED - YOU WIN !!!");
         }
-        else 
+        else
         {
             // IA TURN
             make_ia_plays();
@@ -485,7 +474,6 @@ void play()
             game_finish = 1;
             printf("GAME TERMINATED - YOU LOST !!!");
         }
-
     }
 }
 
@@ -499,26 +487,27 @@ int all_ia_boats_sunk()
             counter++;
         }
     }
-    if (counter == 4) return 1;
+    if (counter == 4)
+        return 1;
 
     return 0;
 }
 
-
 int all_player_boats_sunk()
 {
     int counter = 0;
-    for(int i = 0; i < 10; i++)
+    for (int i = 0; i < 10; i++)
     {
-        for(int j = 0; j < 10; j++)
+        for (int j = 0; j < 10; j++)
         {
             if (game_board_color[i][j] == 'r')
             {
-                counter ++;
+                counter++;
             }
         }
     }
-    if (counter == 12) return 1;
+    if (counter == 2)
+        return 1;
 
     return 0;
 }
