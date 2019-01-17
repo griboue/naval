@@ -487,7 +487,7 @@ int all_ia_boats_sunk()
             counter++;
         }
     }
-    if (counter == 4)
+    if (counter == 14)
         return 1;
 
     return 0;
@@ -506,7 +506,7 @@ int all_player_boats_sunk()
             }
         }
     }
-    if (counter == 2)
+    if (counter == 14)
         return 1;
 
     return 0;
